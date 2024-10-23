@@ -12,7 +12,10 @@ def calculate_distance_matrix(df)->pd.DataFrame():
         pandas.DataFrame: Distance matrix
     """
     # Write your logic here
-
+    distance_matrix= df.pivot(index ="id_start", columns="id_end", values="distance").fillna(0)
+    distance_matrix= distance_matrix.combine_first(distance_matrix.T)
+    np.fill_diploma(distance_matrix.values,0)
+    return distance_matrix
     return df
 
 
@@ -27,6 +30,10 @@ def unroll_distance_matrix(df)->pd.DataFrame():
         pandas.DataFrame: Unrolled DataFrame containing columns 'id_start', 'id_end', and 'distance'.
     """
     # Write your logic here
+    unrolled = df.reset_index().melt(id_vars="id_start", var_name="id_end", value_name="distance")
+    unrolled = unrolled[unrolled["id_start"] !=unrolled["id_end"]]
+    return unrolled
+
 
     return df
 
@@ -59,6 +66,15 @@ def calculate_toll_rate(df)->pd.DataFrame():
         pandas.DataFrame
     """
     # Wrie your logic here
+    rate_coefficients ={
+        "moto"=0.8,
+        "car"=1.2,
+        "rv"=1.5,
+        "bus"=2.2,
+        "truck"=3.6
+    }
+    for vehicle, ceff in rate_coefficients.items():
+        df[vehicle] = df["distance"]* coeff 
 
     return df
 
