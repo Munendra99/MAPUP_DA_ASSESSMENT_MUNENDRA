@@ -51,7 +51,10 @@ def find_ids_within_ten_percentage_threshold(df, reference_id)->pd.DataFrame():
                           of the reference ID's average distance.
     """
     # Write your logic here
-
+    avg_distances=df.groupby("id_start")["distance"].mean()
+    reference_avg =avg_distances[reference_id]
+    within_threshhold = avg_distances[(avg_distances >= 0.9 _reference_avg)&(avg_distances <= 1.1 * reference_avg)]
+    return sorted(within_threshold.index.tolist())
     return df
 
 
@@ -90,5 +93,17 @@ def calculate_time_based_toll_rates(df)->pd.DataFrame():
         pandas.DataFrame
     """
     # Write your logic here
+    def apply_time_based_discount(row,day,time_of_day):
+        if day in ["Saturday","Sunday"]:
+            return 0.7
+        if time(0,0)<= time_of_day <= time(10,0):
+            return 0.8
+        elif time(10,0) < time_of_day <= time(18,0):
+            return 1.2
+        else:
+            return 0.8
+    for vehicle in ["moto","car","rv","bus","truck"]:
+        df[vehicle]=df.apply(lambda row: row[vehicle]* apply_time_based_discount(row,row["start_day"],row["start_time"]), axis=1)
+
 
     return df
